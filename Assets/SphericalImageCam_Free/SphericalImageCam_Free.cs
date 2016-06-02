@@ -54,6 +54,8 @@ public class SphericalImageCam_Free : MonoBehaviour {
 		}
 
 		for (int i = 0; i < 5; i++) {
+            //if (i == 0 || i == 1) continue; // ã‰º”ñ•\Ž¦
+
 			GameObject dummy = new GameObject();
 			Vector3 rot = new Vector3(rots[i * 2], rots[i * 2 + 1], 0);
 			dummy.transform.SetParent(gameObject.transform);
