@@ -31,7 +31,7 @@ public class Teleport : MonoBehaviour, IGvrGazeResponder {
     }
   }
 
-  public void SetGazedAt(bool gazedAt) {
+    public void SetGazedAt(bool gazedAt) {
     GetComponent<Renderer>().material.color = gazedAt ? Color.green : Color.red;
   }
 

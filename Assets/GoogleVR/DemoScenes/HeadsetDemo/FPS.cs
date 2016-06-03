@@ -28,6 +28,9 @@ public class FPS : MonoBehaviour {
     string text = "Direct ";
     text += GvrViewer.Controller.directRender ? "ON" : "off";
 
+    Pose3D a = GvrViewer.Instance.HeadPose;
+    text += a.Orientation;
+
     text += " / Distortion correction ";
     switch(GvrViewer.Instance.DistortionCorrection) {
     case GvrViewer.DistortionCorrectionMethod.Unity:
