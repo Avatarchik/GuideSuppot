@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class RotateCamera : MonoBehaviour
+public class RotateManager : MonoBehaviour
 {
+    public int port = 12000;
     private Quaternion start_gyro;
-    private Quaternion initialRotation; 
     private long _lastOscTimeStamp = -1;
 
     void Awake()
@@ -16,8 +16,7 @@ public class RotateCamera : MonoBehaviour
 
     void Start()
     {
-        OSCHandler.Instance.Init("", 0, 12000);
-        initialRotation = transform.rotation;
+        OSCHandler.Instance.Init("", 0, port);
     }
 
     void Update()
@@ -33,25 +32,40 @@ public class RotateCamera : MonoBehaviour
 
                     string address = (string)item.Value.packets[i].Data[0];
                     string[] data = address.Split(',');
-                    Quaternion a = new Quaternion(
+                    Quaternion hmdGyro = new Quaternion(
                         float.Parse(data[0]),
                         float.Parse(data[1]),
                         float.Parse(data[2]),
                         float.Parse(data[3])
                     );
+
                     if (start_gyro.x == 0.0)
                     {
-                        if (a.x == 0.0f) return;
-                        Quaternion b = Quaternion.Euler(0, 0, 90) * a;
+                        if (hmdGyro.x == 0.0f) return;
+                        Quaternion b = Quaternion.Euler(0, 0, 90) * hmdGyro;
                         start_gyro = b;
                     }
                     else
                     {
-                        Quaternion b = Quaternion.Inverse(start_gyro) * Quaternion.Euler(0, 0, 90) * a;
-                        this.transform.localRotation = new Quaternion(-b.x, -b.y, -b.z, b.w);
+                        Quaternion b = Quaternion.Inverse(start_gyro) * Quaternion.Euler(0, 0, 90) * hmdGyro;
+                        b = new Quaternion(b.x, -b.y, b.z, b.w); ;
+                        GameObject obj = GameObject.Find("Indicator");
+                        obj.transform.localRotation = Quaternion.Euler(0, b.eulerAngles.y, 0);
                     }
                 }
             }
         }
+
+        SelfRotate();
+    }
+
+    void SelfRotate()
+    {
+        if (start_gyro.x == 0.0) return;
+        Quaternion gyro = Input.gyro.attitude;
+        Quaternion b = Quaternion.Inverse(start_gyro) * Quaternion.Euler(0, 0, 90) * gyro;
+        b = new Quaternion(b.x, -b.y, b.z, b.w);
+        Camera cam = Camera.main;
+        cam.transform.localRotation = Quaternion.Euler(90, b.eulerAngles.y, 0);
     }
 }

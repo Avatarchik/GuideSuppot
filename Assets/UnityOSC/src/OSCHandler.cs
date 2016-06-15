@@ -133,32 +133,37 @@ public class OSCHandler : MonoBehaviour
 	/// </summary>
 	void OnApplicationQuit() 
 	{
-		foreach(KeyValuePair<string,ClientLog> pair in _clients)
-		{
-			pair.Value.client.Close();
-		}
-		
-		foreach(KeyValuePair<string,ServerLog> pair in _servers)
-		{
-			pair.Value.server.Close();
-		}
-			
-		_instance = null;
-	}
-	
-	/// <summary>
-	/// Creates an OSC Client (sends OSC messages) given an outgoing port and address.
-	/// </summary>
-	/// <param name="clientId">
-	/// A <see cref="System.String"/>
-	/// </param>
-	/// <param name="destination">
-	/// A <see cref="IPAddress"/>
-	/// </param>
-	/// <param name="port">
-	/// A <see cref="System.Int32"/>
-	/// </param>
-	public void CreateClient(string clientId, IPAddress destination, int port)
+        DestroyInstance();
+    }
+
+    public void DestroyInstance()
+    {
+        foreach (KeyValuePair<string, ClientLog> pair in _clients)
+        {
+            pair.Value.client.Close();
+        }
+
+        foreach (KeyValuePair<string, ServerLog> pair in _servers)
+        {
+            pair.Value.server.Close();
+        }
+
+        _instance = null;
+    }
+
+    /// <summary>
+    /// Creates an OSC Client (sends OSC messages) given an outgoing port and address.
+    /// </summary>
+    /// <param name="clientId">
+    /// A <see cref="System.String"/>
+    /// </param>
+    /// <param name="destination">
+    /// A <see cref="IPAddress"/>
+    /// </param>
+    /// <param name="port">
+    /// A <see cref="System.Int32"/>
+    /// </param>
+    public void CreateClient(string clientId, IPAddress destination, int port)
 	{
 		ClientLog clientitem = new ClientLog();
 		clientitem.client = new OSCClient(destination, port);
